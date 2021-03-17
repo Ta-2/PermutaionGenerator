@@ -71,7 +71,6 @@ public:
 	void AllPermutation(){
 		if(stage == (int)source.size()){
 			all++;
-			cout << "permutation: ";
 			for(auto r: result) cout << r;
 			cout << endl;
 			return;
@@ -129,8 +128,24 @@ int main(int argc, char *argv[]){
 	cout << "all: " << num << endl;
 
 	PermutationGenerator<char> *pg2 = new PermutationGenerator<char>;
-	string str("CRYPTO");
-	for(char &s: str)pg2->AddElement(s);
+	cout << "Permutation of \"CRYPTO\" " << endl;
+	for(char &s: string("CRYPTO") )pg2->AddElement(s);
+	pg2->PrintSource();
+	pg2->AllPermutation();
+	
+	pg2->reset();
+	cout << "Permutation of \"C\" " << endl;
+	for(char &s: string("C") )pg2->AddElement(s);
+	pg2->PrintSource();
+	pg2->AllPermutation();
+	
+	pg2->reset();
+	for(char &s: string("CR") )pg2->AddElement(s);
+	pg2->PrintSource();
+	pg2->AllPermutation();
+	
+	pg2->reset();
+	for(char &s: string("CRY") )pg2->AddElement(s);
 	pg2->PrintSource();
 	pg2->AllPermutation();
 	
