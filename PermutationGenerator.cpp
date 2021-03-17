@@ -28,9 +28,9 @@ public:
 		itrs.clear();
 		return;
 	}
-	void Gen(){
+	void Gen(int extract = -1){
 		Initialize();
-		for(typename vector<pair<bool, U>>::iterator s = source.begin(); s != source.end(); s++){
+		for(typename vector<pair<bool, U>>::iterator s = source.begin(); s != source.end() && extract; s++, extract--){
 			result.push_back(s->second);
 			s->first = false;
 			itrs.push_back(s);
@@ -107,7 +107,7 @@ public:
 };
 
 int main(int argc, char *argv[]){
-	int elems[] = {0, 1, 2, 3, 4, 5};
+	int elems[] = {0, 1, 2, 3};
 	PermutationGenerator<int*> *pg = new PermutationGenerator<int*>;
 	
 	for(int &a: elems) pg->AddElement(&a);
@@ -143,11 +143,19 @@ int main(int argc, char *argv[]){
 	for(char &s: string("CR") )pg2->AddElement(s);
 	pg2->PrintSource();
 	pg2->AllPermutation();
-	
+
 	pg2->reset();
-	for(char &s: string("CRY") )pg2->AddElement(s);
-	pg2->PrintSource();
-	pg2->AllPermutation();
+	for(char &s: string("CRYPTO") )pg2->AddElement(s);
+	
+	if(argc > 1)pg2->Gen((int)atoi(argv[1]));
+	else pg2->Gen();
+	num = 1;
+	pg2->PrintResult();
+	while(pg2->nextPermutation()){
+		pg2->PrintResult();
+		num++;
+	}
+	cout << "all: " << num << endl;
 	
 	return 0;
 }
