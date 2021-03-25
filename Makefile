@@ -9,3 +9,6 @@ test: test.o
 
 test.o: test.cpp
 	g++ -Wall -I. -c test.cpp
+
+clean:
+	rm *.o test PermutationGenerator
