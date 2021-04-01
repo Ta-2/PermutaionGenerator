@@ -7,8 +7,11 @@ using namespace std;
 template<class U>
 class PermutationGenerator{
 private:
-	vector<pair<bool, U>> source;
-	vector<typename vector<pair<bool, U>>::iterator> itrs;
+	         vector<pair<bool, U>> source;
+	typename vector<pair<bool, U>>::iterator send = source.end(); /**/
+	         vector<typename vector<pair<bool, U>>::iterator> itrs;
+	typename vector<typename vector<pair<bool, U>>::iterator>::iterator beg = itrs.begin(); /**/
+	typename vector<typename vector<pair<bool, U>>::iterator>::iterator ed = itrs.end(); /**/
 	vector<U> result;
 	int stage = 0;
 public:
@@ -24,6 +27,9 @@ public:
 		Initialize();
 	}
 	void Initialize(){
+		send = source.end(); /**/
+		beg = itrs.begin(); /**/
+		ed = itrs.end(); /**/
 		result.clear();
 		itrs.clear();
 		return;
@@ -64,6 +70,22 @@ public:
 		}
 		return true;
 	}
+	bool nextPermutation2(){
+		typename vector<typename vector<pair<bool, U>>::iterator>::iteratoriterator itr = (--ed);
+		while(true){
+			while(!(*itr)->first && (*itr) != send)--(*itr);
+			result.pop_back();
+			//();
+
+			if(itr == beg)break;
+		}
+
+		return true;
+	}
+	inline bool start(typename vector<pair<bool, U>>::iterator it){
+		//return it == itrs.begin ? , ;
+	}
+
 	void PrintAllPermutation(){
 		Initialize();
 		AllPermutation();
