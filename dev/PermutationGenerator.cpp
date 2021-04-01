@@ -10,10 +10,11 @@ private:
 	         vector<pair<bool, U>> source;
 	typename vector<pair<bool, U>>::iterator send = source.end(); /**/
 	         vector<typename vector<pair<bool, U>>::iterator> itrs;
-	typename vector<typename vector<pair<bool, U>>::iterator>::iterator beg = itrs.begin(); /**/
-	typename vector<typename vector<pair<bool, U>>::iterator>::iterator ed = itrs.end(); /**/
+	typename vector<typename vector<pair<bool, U>>::iterator>::iterator begin = itrs.begin(); /**/
+	typename vector<typename vector<pair<bool, U>>::iterator>::iterator end = itrs.end(); /**/
 	vector<U> result;
 	int stage = 0;
+	bool GenFlag = false; /**/
 public:
 	int all = 0;
 	void AddElement(U add){
@@ -21,26 +22,30 @@ public:
 		if(result.capacity() < source.size())result.reserve(source.size());
 		if(itrs.capacity() < source.size())itrs.reserve(source.size());
 		cout << "source.size: " << source.size() << ", result.capacity: " << result.capacity() << endl;
+		GenFlag = false; /**/
 	}
 	void reset(){
 		source.clear();
 		Initialize();
+		GenFlag = false; /**/
 	}
 	void Initialize(){
 		send = source.end(); /**/
-		beg = itrs.begin(); /**/
-		ed = itrs.end(); /**/
 		result.clear();
 		itrs.clear();
+		GenFlag = false;
 		return;
 	}
 	void Gen(int extract = -1){
 		Initialize();
+		GenFlag = true;
 		for(typename vector<pair<bool, U>>::iterator s = source.begin(); s != source.end() && extract; s++, extract--){
 			result.push_back(s->second);
 			s->first = false;
 			itrs.push_back(s);
 		}
+		begin = itrs.begin(); /**/
+		end = itrs.end(); /**/
 		return;
 	}
 	bool nextPermutation(){
@@ -71,19 +76,38 @@ public:
 		return true;
 	}
 	bool nextPermutation2(){
-		typename vector<typename vector<pair<bool, U>>::iterator>::iteratoriterator itr = (--ed);
-		while(true){
-			while(!(*itr)->first && (*itr) != send)--(*itr);
-			result.pop_back();
+		typename vector<typename vector<pair<bool, U>>::iterator>::iterator rit = end;
+		cout << "nextPer" << endl;
+		while(previous_begin(&rit)){
+			cout << (*rit)->second;
+			//while(!(*itr)->first && (*itr) != send)--(*itr);
+			//result.pop_back();
 			//();
 
-			if(itr == beg)break;
+			//if(itr == begin)break;
 		}
 
 		return true;
 	}
-	inline bool start(typename vector<pair<bool, U>>::iterator it){
-		//return it == itrs.begin ? , ;
+	inline bool previous_begin(typename vector<typename vector<pair<bool, U>>::iterator>::iterator* it){
+		if(it == NULL){
+			//cout << "its NULL" << endl;
+			return false;
+		} else if(*it == begin){
+			//cout << "its begin" << endl;
+			it = NULL;
+			return false;
+		} else {
+			//cout << "its other" << endl;
+			--(*it);
+			return true;
+		}
+	}
+	inline bool next_begin(typename vector<typename vector<pair<bool, U>>::iterator>::iterator* it){
+		if(it == NULL){
+			*it = begin;
+			return true;
+		} else return false;
 	}
 
 	void PrintAllPermutation(){
@@ -152,6 +176,9 @@ int main(int argc, char *argv[]){
 	PermutationGenerator<char> *pg2 = new PermutationGenerator<char>;
 	cout << "Permutation of \"CRYPTO\" " << endl;
 	for(char &s: string("CRYPTO") )pg2->AddElement(s);
+	pg2->Gen();
+	pg2->nextPermutation2();
+	/*
 	pg2->PrintSource();
 	pg2->AllPermutation();
 	
@@ -178,6 +205,6 @@ int main(int argc, char *argv[]){
 		num++;
 	}
 	cout << "all: " << num << endl;
-	
+	*/
 	return 0;
 }
