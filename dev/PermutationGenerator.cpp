@@ -1,8 +1,12 @@
+#include <sys/time.h>
+
 #include <string>
 #include <iostream>
 #include <vector>
 #include <iterator>
 using namespace std;
+
+void measure_time(const char*, int);
 
 template<class U>
 class PermutationGenerator{
@@ -17,6 +21,11 @@ private:
 	int stage = 0;
 	bool GenFlag = false; /**/
 public:
+	~PermutationGenerator(){
+		itrs.shrink_to_fit();
+		result.shrink_to_fit();
+		source.shrink_to_fit();
+	}
 	int all = 0;
 	void AddElement(U add){
 		source.push_back(make_pair(true, add));
@@ -77,59 +86,38 @@ public:
 		}
 		return true;
 	}
-	bool nextPermutation2(){
+	inline bool nextPermutation2(){
 		typename vector<typename vector<pair<bool, U>>::iterator>::iterator rit = end;
-		//cout << "nextPer" << endl;
 		--rit;
 		do{
-			//cout << "a" << endl;
 			result.pop_back();
-			//cout << "b" << endl;
 			(*rit)->first = true;
-			//cout << "c" << endl;
-			//cout << (*rit)->second;
-			//cout << "d" << endl;
 			if(*rit == send)continue;
-			//cout << "e" << endl;
-			do {++(*rit); /*cout << "f" << endl;*/}
+			do ++(*rit);
 			while(!(*rit)->first && (*rit) != send);
 			if(*rit != send){
-				//cout << "g" << endl;
 				result.push_back((*rit)->second);
-				//cout << "h" << endl;
 				(*rit)->first = false;
-				//cout << "i" << endl;
-				//++rit;
 				break;
 			}
 		} while(is_this_front_of_begin(&rit));
-		//cout << "j" << endl;
 		if(rit == end)return false;
-		//cout << "k: " << /*(*rit)->second << */endl;
 		for(++rit; rit != end; ++rit){
-			//cout << "l" << endl;
 			*rit = sbegin;
-			//cout << "m" << endl;
-			while(!(*rit)->first && (*rit) != send){/*cout << "lm: ";*/++(*rit);}
-			//cout << "n" << endl;
+			while(!(*rit)->first && (*rit) != send)++(*rit);
 			(*rit)->first = false;
-			//cout << "o" << endl;
 			result.push_back((*rit)->second);
-			//cout << "p" << endl;
 		}
 
 		return true;
 	}
 	inline bool is_this_front_of_begin(typename vector<typename vector<pair<bool, U>>::iterator>::iterator* it){
 		if(*it == end){
-			//cout << "its finished" << endl;
 			return false;
 		} else if(*it == begin){
-			//cout << "its begin" << endl;
 			*it = end;
 			return false;
 		} else {
-			//cout << "its other" << endl;
 			--(*it);
 			return true;
 		}
@@ -203,12 +191,34 @@ int main(int argc, char *argv[]){
 		num++;
 	}
 	cout << "all: " << num << endl;
+	delete(pg);
 
-	PermutationGenerator<char> *pg2 = new PermutationGenerator<char>;
-	cout << "Permutation of \"CRYPTO\" " << endl;
-	for(char &s: string("CRYPTOABCD") )pg2->AddElement(s);
-	pg2->Gen();
-	while(pg2->nextPermutation2())/*pg2->PrintResult()*/;
+	cout << "Permutation of \"CRYPTO\" using nextPermutation" << endl;
+	measure_time("CRYPTO", 1);
+	cout << "Permutation of \"CRYPTO\" using nextPermutation2" << endl;
+	measure_time("CRYPTO", 2);
+	cout << endl;
+	
+	cout << "Permutation of \"CRYPTOABC\" using nextPermutation" << endl;
+	measure_time("CRYPTOABC", 1);
+	cout << "Permutation of \"CRYPTOABC\" using nextPermutation2" << endl;
+	measure_time("CRYPTOABC", 2);
+	cout << endl;
+			
+	cout << "Permutation of \"CRYPTOABCD\" using nextPermutation" << endl;
+	measure_time("CRYPTOABCD", 1);
+	cout << "Permutation of \"CRYPTOABCD\" using nextPermutation" << endl;
+	measure_time("CRYPTOABCD", 2);
+
+	cout << "Permutation of \"CRYPTOABCDE\" using nextPermutation" << endl;
+	measure_time("CRYPTOABCDE", 1);
+	cout << "Permutation of \"CRYPTOABCDE\" using nextPermutation" << endl;
+	measure_time("CRYPTOABCDE", 2);
+
+	cout << "Permutation of \"CRYPTOABCDEF\" using nextPermutation" << endl;
+	measure_time("CRYPTOABCDEF", 1);
+	cout << "Permutation of \"CRYPTOABCDEF\" using nextPermutation" << endl;
+	measure_time("CRYPTOABCDEF", 2);
 	/*
 	pg2->PrintSource();
 	pg2->AllPermutation();
@@ -238,4 +248,27 @@ int main(int argc, char *argv[]){
 	cout << "all: " << num << endl;
 	*/
 	return 0;
+}
+
+void measure_time(const char* input, int vertion){
+	PermutationGenerator<char> *pg = new PermutationGenerator<char>;
+
+	unsigned int sec;
+	int nsec;
+	double d_sec;
+	struct timespec start_time, end_time;
+
+	for(char &s: string(input) )pg->AddElement(s);
+	pg->Gen();	
+
+	clock_gettime(CLOCK_REALTIME, &start_time);	
+	if(vertion == 1) while(pg->nextPermutation());
+	if(vertion == 2) while(pg->nextPermutation2());
+	clock_gettime(CLOCK_REALTIME, &end_time);
+	sec = end_time.tv_sec - start_time.tv_sec;	
+	nsec = end_time.tv_nsec - start_time.tv_nsec;
+	d_sec = (double)sec + (double)nsec / (1000*1000*1000);
+	printf("time:%f\n", d_sec);
+	
+	delete(pg);
 }
