@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <iterator>
+#include <omp.h>
 using namespace std;
 
 void measure_time(const char*, int);
@@ -19,7 +20,6 @@ private:
 	typename vector<typename vector<pair<bool, U>>::iterator>::iterator end = itrs.end(); /**/
 	vector<U> result;
 	int stage = 0;
-	bool GenFlag = false; /**/
 public:
 	~PermutationGenerator(){
 		itrs.shrink_to_fit();
@@ -32,24 +32,20 @@ public:
 		if(result.capacity() < source.size())result.reserve(source.size());
 		if(itrs.capacity() < source.size())itrs.reserve(source.size());
 		cout << "source.size: " << source.size() << ", result.capacity: " << result.capacity() << endl;
-		GenFlag = false; /**/
 	}
 	void reset(){
 		source.clear();
 		Initialize();
-		GenFlag = false; /**/
 	}
 	void Initialize(){
 		send = source.end(); /**/
 		sbegin = source.begin(); /**/
 		result.clear();
 		itrs.clear();
-		GenFlag = false;
 		return;
 	}
 	void Gen(int extract = -1){
 		Initialize();
-		GenFlag = true;
 		for(typename vector<pair<bool, U>>::iterator s = source.begin(); s != source.end() && extract; s++, extract--){
 			result.push_back(s->second);
 			s->first = false;
@@ -122,13 +118,7 @@ public:
 			return true;
 		}
 	}
-	inline bool is_this_back_of_end(typename vector<typename vector<pair<bool, U>>::iterator>::iterator* it){
-		if(*it == end){
-			*it = end;
-			return true;
-		} else return false;
-	}
-
+	
 	void PrintAllPermutation(){
 		Initialize();
 		AllPermutation();
